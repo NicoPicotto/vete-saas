@@ -313,3 +313,35 @@ export const turnoSchema = z.object({
 });
 
 export type TurnoFormValues = z.infer<typeof turnoSchema>;
+
+// ============================================
+// CLINICA SCHEMA
+// ============================================
+
+const hexColor = z
+  .string()
+  .regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, 'Debe ser un color HEX válido (ej: #3B82F6)')
+  .optional()
+  .or(z.literal(''));
+
+export const clinicaSchema = z.object({
+  nombre: z
+    .string()
+    .min(2, 'El nombre debe tener al menos 2 caracteres')
+    .max(100, 'El nombre no puede exceder 100 caracteres'),
+  telefono: z
+    .string()
+    .max(20, 'El teléfono no puede exceder 20 caracteres')
+    .optional()
+    .or(z.literal('')),
+  direccion: z
+    .string()
+    .max(200, 'La dirección no puede exceder 200 caracteres')
+    .optional()
+    .or(z.literal('')),
+  colorPrimario: hexColor,
+  colorSecundario: hexColor,
+  colorAcento: hexColor,
+});
+
+export type ClinicaFormValues = z.infer<typeof clinicaSchema>;

@@ -275,6 +275,22 @@ export interface Turno {
 export type TurnoFormData = Omit<Turno, 'id' | 'clienteNombre' | 'clienteApellido' | 'clienteTelefono' | 'mascotaNombre' | 'mascotaEspecie'>;
 
 // ============================================
+// CLÍNICA (SaaS — perfil de la clínica)
+// ============================================
+export interface Clinica {
+  id: string; // Mismo UUID que auth.users
+  nombre?: string;
+  direccion?: string;
+  telefono?: string;
+  colorPrimario?: string; // HEX, ej: #3B82F6
+  colorSecundario?: string;
+  colorAcento?: string;
+  onboardingCompletado: boolean;
+}
+
+export type ClinicaFormData = Pick<Clinica, 'nombre' | 'direccion' | 'telefono' | 'colorPrimario' | 'colorSecundario' | 'colorAcento'>;
+
+// ============================================
 // UTILIDADES
 // ============================================
 export interface SelectOption {
