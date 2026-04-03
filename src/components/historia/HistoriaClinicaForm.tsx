@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/collapsible';
 import { Bell, Calendar, Clock, ChevronDown, Paperclip, X } from 'lucide-react';
 import type { HistoriaClinica, ArchivoAdjunto } from '@/lib/types';
+import { getSignedUrl } from '@/services/storage.service';
 
 export interface RecordatorioData {
   titulo: string;
@@ -337,14 +338,16 @@ export function HistoriaClinicaForm({
               <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
                 <Paperclip className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm flex-1">{archivoExistente.nombre}</span>
-                <a
-                  href={archivoExistente.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
                   className="text-xs text-primary hover:underline"
+                  onClick={async () => {
+                    const url = await getSignedUrl(archivoExistente.url);
+                    window.open(url, '_blank', 'noopener,noreferrer');
+                  }}
                 >
                   Ver archivo
-                </a>
+                </button>
               </div>
             )}
 

@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase, getUserId } from '@/lib/supabase';
 import type { Recordatorio } from '@/lib/types';
 import type { RecordatorioFormValues } from '@/lib/schemas';
 
@@ -144,11 +144,12 @@ export const getRecordatoriosByMascota = async (mascotaId: string): Promise<Reco
 export const createRecordatorio = async (
   recordatorioData: RecordatorioFormValues & { clienteId: string; historiaClinicaId?: string }
 ): Promise<Recordatorio> => {
+  const userId = await getUserId();
   const dbData = recordatorioToDb(recordatorioData);
 
   const { data, error } = await supabase
     .from('recordatorios')
-    .insert(dbData)
+    .insert({ ...dbData, user_id: userId })
     .select()
     .single();
 

@@ -11,3 +11,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+/**
+ * Obtiene el ID del usuario autenticado actual.
+ * Lanza error si no hay sesión activa.
+ */
+export const getUserId = async (): Promise<string> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.user) throw new Error('No hay sesión activa');
+  return session.user.id;
+};

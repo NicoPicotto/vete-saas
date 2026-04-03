@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase, getUserId } from '@/lib/supabase';
 import type { Desparasitacion, DesparasitacionFormData } from '@/lib/types';
 
 // Tipo para la tabla de Supabase (snake_case)
@@ -71,9 +71,10 @@ export const getDesparasitacionById = async (id: string): Promise<Desparasitacio
  * Crear una nueva desparasitación
  */
 export const createDesparasitacion = async (desparasitacionData: DesparasitacionFormData): Promise<Desparasitacion> => {
+  const userId = await getUserId();
   const { data, error } = await supabase
     .from('desparasitaciones')
-    .insert(desparasitacionToDb(desparasitacionData))
+    .insert({ ...desparasitacionToDb(desparasitacionData), user_id: userId })
     .select()
     .single();
 

@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase, getUserId } from '@/lib/supabase';
 import type { ItemPago } from '@/lib/types';
 import type { ItemPagoFormValues } from '@/lib/schemas';
 
@@ -98,6 +98,7 @@ export const getItemsPagoByClienteId = async (clienteId: string): Promise<ItemPa
  * Crear un nuevo item de pago
  */
 export const createItemPago = async (itemData: ItemPagoFormValues): Promise<ItemPago> => {
+  const userId = await getUserId();
   const dbData = itemPagoToDb(itemData);
 
   // Calcular monto_pagado inicial y estado
@@ -115,6 +116,7 @@ export const createItemPago = async (itemData: ItemPagoFormValues): Promise<Item
     .from('items_pago')
     .insert({
       ...dbData,
+      user_id: userId,
       monto_pagado: montoPagadoInicial,
       estado: estadoInicial,
     })

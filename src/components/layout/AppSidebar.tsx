@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
    LayoutDashboard,
    Users,
@@ -8,6 +8,7 @@ import {
    Package,
    ShoppingCart,
    CalendarClock,
+   LogOut,
 } from "lucide-react";
 import {
    Sidebar,
@@ -21,6 +22,7 @@ import {
    SidebarMenuButton,
    SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface NavItem {
    title: string;
@@ -41,6 +43,13 @@ const navigation: NavItem[] = [
 
 export function AppSidebar() {
    const location = useLocation();
+   const navigate = useNavigate();
+   const { signOut, user } = useAuth();
+
+   async function handleLogout() {
+      await signOut();
+      navigate('/login', { replace: true });
+   }
 
    return (
       <Sidebar>
@@ -76,7 +85,15 @@ export function AppSidebar() {
             </SidebarGroup>
          </SidebarContent>
 
-         <SidebarFooter></SidebarFooter>
+         <SidebarFooter>
+            <div className='flex flex-col gap-1 px-2 py-2'>
+               <p className='truncate px-2 text-xs text-muted-foreground'>{user?.email}</p>
+               <SidebarMenuButton onClick={handleLogout} className='text-muted-foreground'>
+                  <LogOut className='h-4 w-4' />
+                  <span>Cerrar sesión</span>
+               </SidebarMenuButton>
+            </div>
+         </SidebarFooter>
       </Sidebar>
    );
 }

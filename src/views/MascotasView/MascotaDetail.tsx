@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { useMascota } from '@/hooks/useMascotas';
 import { useCliente } from '@/hooks/useClientes';
 import { useHistoriasClinicasByMascota, useCreateHistoriaClinica, useUpdateHistoriaClinica, useDeleteHistoriaClinica } from '@/hooks/useHistoriaClinica';
 import { useCreateRecordatorio } from '@/hooks/useRecordatorios';
 import { useVacunacionesByMascota, useCreateVacunacion, useDeleteVacunacion } from '@/hooks/useVacunaciones';
 import { useDesparasitacionesByMascota, useCreateDesparasitacion, useDeleteDesparasitacion } from '@/hooks/useDesparasitaciones';
-import { uploadArchivoHistoriaClinica, deleteAllArchivosHistoriaClinica } from '@/services/storage.service';
+import { uploadArchivoHistoriaClinica, deleteAllArchivosHistoriaClinica, getSignedUrl } from '@/services/storage.service';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -34,6 +35,7 @@ import { toast } from 'sonner';
 
 export default function MascotaDetail() {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
 
   // TanStack Query hooks para datos desde Supabase
   const { data: mascota, isLoading: isLoadingMascota, error: errorMascota } = useMascota(id!);
@@ -156,7 +158,7 @@ export default function MascotaDetail() {
     if (deletingConsultaId) {
       // Eliminar archivos adjuntos antes de eliminar la consulta
       try {
-        await deleteAllArchivosHistoriaClinica(deletingConsultaId);
+        await deleteAllArchivosHistoriaClinica(user!.id, deletingConsultaId);
       } catch (error) {
         console.error('Error al eliminar archivos:', error);
         // Continuar con la eliminación de la consulta aunque falle la eliminación de archivos
@@ -485,17 +487,13 @@ export default function MascotaDetail() {
                         <Button
                           variant="outline"
                           size="sm"
-                          asChild
+                          onClick={async () => {
+                            const url = await getSignedUrl(consulta.archivoAdjunto!.url);
+                            window.open(url, '_blank', 'noopener,noreferrer');
+                          }}
                         >
-                          <a
-                            href={consulta.archivoAdjunto.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2"
-                          >
-                            <Calendar className="h-4 w-4" />
-                            Ver {consulta.archivoAdjunto.tipo === 'application/pdf' ? 'PDF' : 'Imagen'}
-                          </a>
+                          <Calendar className="h-4 w-4" />
+                          Ver {consulta.archivoAdjunto.tipo === 'application/pdf' ? 'PDF' : 'Imagen'}
                         </Button>
                       </div>
                     )}

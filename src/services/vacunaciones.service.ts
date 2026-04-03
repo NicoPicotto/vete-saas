@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase, getUserId } from '@/lib/supabase';
 import type { Vacunacion, VacunacionFormData } from '@/lib/types';
 
 // Tipo para la tabla de Supabase (snake_case)
@@ -71,9 +71,10 @@ export const getVacunacionById = async (id: string): Promise<Vacunacion> => {
  * Crear una nueva vacunación
  */
 export const createVacunacion = async (vacunacionData: VacunacionFormData): Promise<Vacunacion> => {
+  const userId = await getUserId();
   const { data, error } = await supabase
     .from('vacunaciones')
-    .insert(vacunacionToDb(vacunacionData))
+    .insert({ ...vacunacionToDb(vacunacionData), user_id: userId })
     .select()
     .single();
 

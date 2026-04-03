@@ -1,8 +1,9 @@
-import { supabase } from '@/lib/supabase';
+import { supabase, getUserId } from '@/lib/supabase';
 
 // Tipos permitidos: PDF e imágenes
 const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB en bytes
+const SIGNED_URL_EXPIRY = 3600; // 1 hora en segundos
 
 export interface ArchivoSubido {
   nombre: string;
@@ -12,113 +13,113 @@ export interface ArchivoSubido {
 }
 
 /**
- * Subir archivo a Supabase Storage
- * Bucket: historia-clinica
- * Path: {historia_clinica_id}/{nombre_archivo}
+ * Subir archivo a Supabase Storage (bucket privado).
+ * Path: {user_id}/{historia_clinica_id}/{timestamp}_{filename}
+ * La URL retornada es una signed URL válida por 1 hora.
  */
 export const uploadArchivoHistoriaClinica = async (
   historiaClinicaId: string,
   file: File
 ): Promise<ArchivoSubido> => {
-  // Validación 1: Tamaño máximo (5 MB)
   if (file.size > MAX_FILE_SIZE) {
     throw new Error('El archivo no puede superar 5 MB');
   }
 
-  // Validación 2: Tipo de archivo (PDF o imagen)
   if (!ALLOWED_TYPES.includes(file.type)) {
     throw new Error('Solo se permiten archivos PDF o imágenes (JPG, PNG)');
   }
 
-  // Generar path único: {id_consulta}/{timestamp}_{filename}
+  const userId = await getUserId();
   const timestamp = Date.now();
   const fileName = `${timestamp}_${file.name}`;
-  const path = `${historiaClinicaId}/${fileName}`;
+  const path = `${userId}/${historiaClinicaId}/${fileName}`;
 
-  // Subir archivo a Supabase Storage
   const { error } = await supabase.storage
     .from('historia-clinica')
     .upload(path, file, {
       cacheControl: '3600',
-      upsert: false, // No sobrescribir si existe
+      upsert: false,
     });
 
   if (error) {
     throw new Error(`Error al subir archivo: ${error.message}`);
   }
 
-  // Obtener URL pública del archivo
-  const { data: { publicUrl } } = supabase.storage
+  const { data: signedData, error: signedError } = await supabase.storage
     .from('historia-clinica')
-    .getPublicUrl(path);
+    .createSignedUrl(path, SIGNED_URL_EXPIRY);
+
+  if (signedError || !signedData) {
+    throw new Error(`Error al generar URL del archivo: ${signedError?.message}`);
+  }
 
   return {
     nombre: file.name,
-    url: publicUrl,
+    url: path, // Guardamos el PATH en DB, no la URL firmada (que expira)
     tipo: file.type,
     tamano: file.size,
   };
 };
 
 /**
- * Eliminar archivo de Supabase Storage
- * Se usa al eliminar una consulta o al reemplazar un archivo
+ * Obtener una signed URL válida por 1 hora para un archivo.
+ * Usar esta función al mostrar archivos (la URL en DB es el path, no la URL).
+ */
+export const getSignedUrl = async (path: string): Promise<string> => {
+  const { data, error } = await supabase.storage
+    .from('historia-clinica')
+    .createSignedUrl(path, SIGNED_URL_EXPIRY);
+
+  if (error || !data) {
+    throw new Error(`Error al obtener URL del archivo: ${error?.message}`);
+  }
+
+  return data.signedUrl;
+};
+
+/**
+ * Eliminar archivo de Supabase Storage por su path.
  */
 export const deleteArchivoHistoriaClinica = async (
-  archivoUrl: string
+  archivoPath: string
 ): Promise<void> => {
   try {
-    // Extraer el path del URL
-    // URL ejemplo: https://xxx.supabase.co/storage/v1/object/public/historia-clinica/abc-123/file.pdf
-    // Extraemos: abc-123/file.pdf
-    const urlParts = archivoUrl.split('/historia-clinica/');
-    if (urlParts.length < 2) {
-      console.warn('URL de archivo inválida, no se puede eliminar:', archivoUrl);
-      return;
-    }
-
-    const path = urlParts[1];
-
     const { error } = await supabase.storage
       .from('historia-clinica')
-      .remove([path]);
+      .remove([archivoPath]);
 
     if (error) {
       console.error('Error al eliminar archivo:', error.message);
-      // No lanzamos error para no bloquear la eliminación de la consulta
     }
   } catch (err) {
     console.error('Error al procesar eliminación de archivo:', err);
-    // No lanzamos error para no bloquear la eliminación de la consulta
   }
 };
 
 /**
- * Eliminar todos los archivos de una consulta
- * Útil al eliminar la consulta completa
+ * Eliminar todos los archivos de una consulta.
+ * Útil al eliminar la consulta completa.
  */
 export const deleteAllArchivosHistoriaClinica = async (
+  userId: string,
   historiaClinicaId: string
 ): Promise<void> => {
   try {
-    // Listar todos los archivos de esta consulta
+    const folderPath = `${userId}/${historiaClinicaId}`;
+
     const { data: files, error: listError } = await supabase.storage
       .from('historia-clinica')
-      .list(historiaClinicaId);
+      .list(folderPath);
 
     if (listError) {
       console.error('Error al listar archivos:', listError.message);
       return;
     }
 
-    if (!files || files.length === 0) {
-      return; // No hay archivos para eliminar
-    }
+    if (!files || files.length === 0) return;
 
-    // Crear array de paths completos
-    const filePaths = files.map(file => `${historiaClinicaId}/${file.name}`);
+    const filePaths = files.map((file) => `${folderPath}/${file.name}`);
 
-    // Eliminar todos los archivos
     const { error: deleteError } = await supabase.storage
       .from('historia-clinica')
       .remove(filePaths);
@@ -128,6 +129,5 @@ export const deleteAllArchivosHistoriaClinica = async (
     }
   } catch (err) {
     console.error('Error al procesar eliminación de archivos:', err);
-    // No lanzamos error para no bloquear la eliminación de la consulta
   }
 };

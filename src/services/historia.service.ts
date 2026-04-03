@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase, getUserId } from '@/lib/supabase';
 import type { HistoriaClinica, HistoriaClinicaFormData, ArchivoAdjunto } from '@/lib/types';
 
 // Tipo para la tabla de Supabase (snake_case)
@@ -9,7 +9,6 @@ interface HistoriaClinicaDB {
   motivo_consulta: string;
   peso: number | null;
   temperatura: number | null;
-  vacunas_aplicadas: string[] | null;
   archivo_adjunto: ArchivoAdjunto | null; // JSONB
   notas: string | null;
   veterinario: string | null;
@@ -25,7 +24,6 @@ const dbToHistoriaClinica = (db: HistoriaClinicaDB): HistoriaClinica => ({
   motivoConsulta: db.motivo_consulta,
   peso: db.peso || undefined,
   temperatura: db.temperatura || undefined,
-  vacunasAplicadas: db.vacunas_aplicadas || undefined,
   archivoAdjunto: db.archivo_adjunto || undefined,
   notas: db.notas || undefined,
   veterinario: db.veterinario || undefined,
@@ -39,7 +37,6 @@ const historiaClinicaToDb = (historia: HistoriaClinicaFormData & { fecha?: Date 
   motivo_consulta: historia.motivoConsulta,
   peso: historia.peso || null,
   temperatura: historia.temperatura || null,
-  vacunas_aplicadas: historia.vacunasAplicadas || null,
   archivo_adjunto: historia.archivoAdjunto || null,
   notas: historia.notas || null,
   veterinario: historia.veterinario || null,
@@ -103,9 +100,10 @@ export const getHistoriasClinicasByMascotaId = async (mascotaId: string): Promis
  * Crear una nueva historia clínica
  */
 export const createHistoriaClinica = async (historiaData: HistoriaClinicaFormData): Promise<HistoriaClinica> => {
+  const userId = await getUserId();
   const { data, error } = await supabase
     .from('historia_clinica')
-    .insert(historiaClinicaToDb(historiaData))
+    .insert({ ...historiaClinicaToDb(historiaData), user_id: userId })
     .select()
     .single();
 

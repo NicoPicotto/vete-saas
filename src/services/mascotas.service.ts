@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase, getUserId } from '@/lib/supabase';
 import type { Mascota, MascotaFormData } from '@/lib/types';
 
 // Tipo para la tabla de Supabase (snake_case)
@@ -99,9 +99,10 @@ export const getMascotasByClienteId = async (clienteId: string): Promise<Mascota
  * Crear una nueva mascota
  */
 export const createMascota = async (mascotaData: MascotaFormData): Promise<Mascota> => {
+  const userId = await getUserId();
   const { data, error } = await supabase
     .from('mascotas')
-    .insert(mascotaToDb(mascotaData))
+    .insert({ ...mascotaToDb(mascotaData), user_id: userId })
     .select()
     .single();
 

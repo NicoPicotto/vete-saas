@@ -235,7 +235,8 @@ export const productoSchema = z.object({
     .number()
     .min(0, 'El precio de costo no puede ser negativo')
     .max(999999999, 'El precio es excesivo')
-    .optional(), // Precio de costo opcional
+    .optional()
+    .or(z.nan().transform(() => undefined)), // Campo vacío → undefined
   precioVenta: z
     .number()
     .positive('El precio de venta debe ser positivo')

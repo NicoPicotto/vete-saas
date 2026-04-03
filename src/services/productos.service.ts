@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase, getUserId } from '@/lib/supabase';
 import type { Producto, ProductoFormData, CategoriaProducto } from '@/lib/types';
 
 // Tipo para la tabla de Supabase (snake_case)
@@ -117,9 +117,10 @@ export const getProductoById = async (id: string): Promise<Producto> => {
  * Crear un nuevo producto
  */
 export const createProducto = async (productoData: ProductoFormData): Promise<Producto> => {
+  const userId = await getUserId();
   const { data, error } = await supabase
     .from('productos')
-    .insert(productoToDb(productoData))
+    .insert({ ...productoToDb(productoData), user_id: userId })
     .select()
     .single();
 

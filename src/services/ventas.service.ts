@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase, getUserId } from '@/lib/supabase';
 import type { Venta, VentaItem, VentaFormInput } from '@/lib/types';
 
 // Tipos para las tablas de Supabase (snake_case)
@@ -150,6 +150,8 @@ export const calcularRecargo = (subtotal: number, metodoPago: 'Contado' | 'Débi
  * También genera automáticamente un ItemPago asociado (solo si hay cliente)
  */
 export const createVenta = async (ventaData: VentaFormInput): Promise<Venta> => {
+  const userId = await getUserId();
+
   // 1. Calcular subtotal (suma de productos sin recargo)
   const subtotal = ventaData.items.reduce((acc, item) => acc + item.precioUnitario * item.cantidad, 0);
 
@@ -167,6 +169,7 @@ export const createVenta = async (ventaData: VentaFormInput): Promise<Venta> => 
   const { data: ventaCreada, error: ventaError } = await supabase
     .from('ventas')
     .insert({
+      user_id: userId,
       cliente_id: ventaData.clienteId || null,
       fecha: ventaData.fecha.toISOString(),
       total,
@@ -185,6 +188,7 @@ export const createVenta = async (ventaData: VentaFormInput): Promise<Venta> => 
 
   // 2. Crear los items de la venta
   const itemsToInsert = ventaData.items.map((item) => ({
+    user_id: userId,
     venta_id: ventaId,
     producto_id: item.productoId,
     cantidad: item.cantidad,
@@ -231,6 +235,7 @@ export const createVenta = async (ventaData: VentaFormInput): Promise<Venta> => 
     const { data: itemPagoCreado, error: itemPagoError } = await supabase
       .from('items_pago')
       .insert({
+        user_id: userId,
         cliente_id: ventaData.clienteId,
         venta_id: ventaId,
         descripcion: `Venta: ${descripcionProductos}`,

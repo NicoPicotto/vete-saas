@@ -1,5 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 import AppLayout from '@/components/layout/AppLayout';
+import { AuthGuard } from '@/components/layout/AuthGuard';
+import LoginView from '@/views/AuthView/LoginView';
+import RecuperarPasswordView from '@/views/AuthView/RecuperarPasswordView';
 import DashboardView from '@/views/DashboardView';
 import ClientesView from '@/views/ClientesView';
 import ClienteDetail from '@/views/ClientesView/ClienteDetail';
@@ -14,10 +17,17 @@ import NuevaVenta from '@/views/VentasView/NuevaVenta';
 import VentaDetail from '@/views/VentasView/VentaDetail';
 
 export const router = createBrowserRouter([
+  // Rutas públicas
+  { path: '/login', element: <LoginView /> },
+  { path: '/recuperar-password', element: <RecuperarPasswordView /> },
+  // Rutas protegidas
   {
-    path: '/',
-    element: <AppLayout />,
+    element: <AuthGuard />,
     children: [
+      {
+        path: '/',
+        element: <AppLayout />,
+        children: [
       {
         index: true,
         element: <DashboardView />,
@@ -65,6 +75,8 @@ export const router = createBrowserRouter([
       {
         path: 'ventas/:id',
         element: <VentaDetail />,
+      },
+        ],
       },
     ],
   },

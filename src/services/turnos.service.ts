@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase, getUserId } from '@/lib/supabase';
 import type { Turno } from '@/lib/types';
 import type { TurnoFormValues } from '@/lib/schemas';
 
@@ -119,9 +119,11 @@ export const checkDisponibilidadSlot = async (
  * Crear un nuevo turno
  */
 export const createTurno = async (formData: TurnoFormValues): Promise<Turno> => {
+  const userId = await getUserId();
   const { data, error } = await supabase
     .from('turnos')
     .insert({
+      user_id: userId,
       cliente_id: formData.clienteId,
       mascota_id: formData.mascotaId || null,
       fecha_hora: buildFechaHora(formData.fecha, formData.hora),
