@@ -16,14 +16,6 @@ function applyColor(variable: string, value?: string) {
   }
 }
 
-// Convierte un HEX de 6 dígitos a rgba con la opacidad indicada.
-function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
 export default function AppLayout() {
   const navigate = useNavigate();
   const { data: clinica, isLoading } = useClinica();
@@ -36,19 +28,8 @@ export default function AppLayout() {
 
   useEffect(() => {
     if (!clinica) return;
-
     // colorPrimario → botones y active states
     applyColor('--primary', clinica.colorPrimario);
-
-    // colorSecundario → sidebar con 55% de opacidad (texto del menú legible)
-    if (clinica.colorSecundario && HEX6_RE.test(clinica.colorSecundario)) {
-      root.style.setProperty('--sidebar', hexToRgba(clinica.colorSecundario, 0.55));
-    } else {
-      root.style.removeProperty('--sidebar');
-    }
-
-    // colorAcento → fondo general de la app
-    applyColor('--background', clinica.colorAcento);
   }, [clinica]);
 
   return (

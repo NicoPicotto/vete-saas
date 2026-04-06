@@ -114,76 +114,33 @@ export function ClinicaForm({ defaultValues, onSubmit, isLoading, submitLabel = 
         </div>
       </div>
 
-      {/* Colores */}
+      {/* Color de marca */}
       <div className='space-y-4'>
         <h3 className='text-sm font-medium text-muted-foreground uppercase tracking-wide'>
-          Colores del sistema
+          Color de la marca
         </h3>
         <p className='text-sm text-muted-foreground'>
-          Hacé clic en el cuadrado de color para abrir el selector, o escribí el código HEX directamente.
-          Dejá en blanco para usar los colores por defecto.
+          Este color se aplica en botones y elementos activos. Dejá en blanco para usar el color por defecto.
         </p>
 
-        <div className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
-          <div className='space-y-2'>
-            <Label htmlFor='colorPrimario'>Color primario</Label>
-            <p className='text-xs text-muted-foreground'>Botones y elementos activos</p>
-            <Controller
-              name='colorPrimario'
-              control={control}
-              render={({ field }) => (
-                <ColorPickerInput
-                  id='colorPrimario'
-                  value={field.value ?? ''}
-                  onChange={field.onChange}
-                  placeholder='#0a2237'
-                />
-              )}
-            />
-            {errors.colorPrimario && (
-              <p className='text-sm text-destructive'>{errors.colorPrimario.message}</p>
+        <div className='space-y-2'>
+          <Label htmlFor='colorPrimario'>Color de la marca</Label>
+          <p className='text-xs text-muted-foreground'>Botones y elementos activos</p>
+          <Controller
+            name='colorPrimario'
+            control={control}
+            render={({ field }) => (
+              <ColorPickerInput
+                id='colorPrimario'
+                value={field.value ?? ''}
+                onChange={field.onChange}
+                placeholder='#0a2237'
+              />
             )}
-          </div>
-
-          <div className='space-y-2'>
-            <Label htmlFor='colorSecundario'>Color del sidebar</Label>
-            <p className='text-xs text-muted-foreground'>Fondo del menú lateral</p>
-            <Controller
-              name='colorSecundario'
-              control={control}
-              render={({ field }) => (
-                <ColorPickerInput
-                  id='colorSecundario'
-                  value={field.value ?? ''}
-                  onChange={field.onChange}
-                  placeholder='#f5c9c0'
-                />
-              )}
-            />
-            {errors.colorSecundario && (
-              <p className='text-sm text-destructive'>{errors.colorSecundario.message}</p>
-            )}
-          </div>
-
-          <div className='space-y-2'>
-            <Label htmlFor='colorAcento'>Color de fondo</Label>
-            <p className='text-xs text-muted-foreground'>Fondo general de la app</p>
-            <Controller
-              name='colorAcento'
-              control={control}
-              render={({ field }) => (
-                <ColorPickerInput
-                  id='colorAcento'
-                  value={field.value ?? ''}
-                  onChange={field.onChange}
-                  placeholder='#f6f6ee'
-                />
-              )}
-            />
-            {errors.colorAcento && (
-              <p className='text-sm text-destructive'>{errors.colorAcento.message}</p>
-            )}
-          </div>
+          />
+          {errors.colorPrimario && (
+            <p className='text-sm text-destructive'>{errors.colorPrimario.message}</p>
+          )}
         </div>
       </div>
 
@@ -201,7 +158,5 @@ export function clinicaToFormValues(clinica: Clinica): Partial<ClinicaFormValues
     telefono: clinica.telefono ?? '',
     direccion: clinica.direccion ?? '',
     colorPrimario: clinica.colorPrimario ?? '',
-    colorSecundario: clinica.colorSecundario ?? '',
-    colorAcento: clinica.colorAcento ?? '',
   };
 }
