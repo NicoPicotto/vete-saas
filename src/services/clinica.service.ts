@@ -7,8 +7,6 @@ interface ClinicaDB {
   direccion: string | null;
   telefono: string | null;
   color_primario: string | null;
-  color_secundario: string | null;
-  color_acento: string | null;
   onboarding_completado: boolean;
 }
 
@@ -18,8 +16,6 @@ const dbToClinica = (db: ClinicaDB): Clinica => ({
   direccion: db.direccion || undefined,
   telefono: db.telefono || undefined,
   colorPrimario: db.color_primario || undefined,
-  colorSecundario: db.color_secundario || undefined,
-  colorAcento: db.color_acento || undefined,
   onboardingCompletado: db.onboarding_completado,
 });
 
@@ -56,8 +52,6 @@ export const updateClinica = async (formData: ClinicaFormData): Promise<Clinica>
       direccion: formData.direccion || null,
       telefono: formData.telefono || null,
       color_primario: formData.colorPrimario || null,
-      color_secundario: formData.colorSecundario || null,
-      color_acento: formData.colorAcento || null,
       onboarding_completado: true,
     })
     .eq('id', userId)

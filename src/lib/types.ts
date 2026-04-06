@@ -282,13 +282,11 @@ export interface Clinica {
   nombre?: string;
   direccion?: string;
   telefono?: string;
-  colorPrimario?: string; // HEX, ej: #3B82F6
-  colorSecundario?: string;
-  colorAcento?: string;
+  colorPrimario?: string; // HEX, ej: #3B82F6 — color de la marca (botones y active states)
   onboardingCompletado: boolean;
 }
 
-export type ClinicaFormData = Pick<Clinica, 'nombre' | 'direccion' | 'telefono' | 'colorPrimario' | 'colorSecundario' | 'colorAcento'>;
+export type ClinicaFormData = Pick<Clinica, 'nombre' | 'direccion' | 'telefono' | 'colorPrimario'>;
 
 // ============================================
 // UTILIDADES

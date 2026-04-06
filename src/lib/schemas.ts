@@ -340,8 +340,6 @@ export const clinicaSchema = z.object({
     .optional()
     .or(z.literal('')),
   colorPrimario: hexColor,
-  colorSecundario: hexColor,
-  colorAcento: hexColor,
 });
 
 export type ClinicaFormValues = z.infer<typeof clinicaSchema>;
