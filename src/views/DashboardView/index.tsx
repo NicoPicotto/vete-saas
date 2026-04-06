@@ -4,11 +4,16 @@ import { useMascotas } from '@/hooks/useMascotas';
 import { useRecordatorios } from '@/hooks/useRecordatorios';
 import { useItemsPago } from '@/hooks/usePagos';
 import { useTurnos } from '@/hooks/useTurnos';
+import { useVentas } from '@/hooks/useVentas';
+import { useHistoriasClinicas } from '@/hooks/useHistoriaClinica';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Users, PawPrint, Bell, CreditCard, CalendarClock, Loader2 } from 'lucide-react';
 import { format, startOfDay, endOfDay } from 'date-fns';
 import { es } from 'date-fns/locale';
+import VentasPorMesChart from '@/components/dashboard/VentasPorMesChart';
+import DeudaEvolucionChart from '@/components/dashboard/DeudaEvolucionChart';
+import ConsultasPorEspecieChart from '@/components/dashboard/ConsultasPorEspecieChart';
 
 export default function DashboardView() {
   const { data: clientes = [], isLoading: isLoadingClientes } = useClientes();
@@ -16,6 +21,8 @@ export default function DashboardView() {
   const { data: recordatorios = [], isLoading: isLoadingRecordatorios } = useRecordatorios();
   const { data: itemsPago = [], isLoading: isLoadingPagos } = useItemsPago();
   const { data: turnos = [], isLoading: isLoadingTurnos } = useTurnos();
+  const { data: ventas = [], isLoading: isLoadingVentas } = useVentas();
+  const { data: historias = [], isLoading: isLoadingHistorias } = useHistoriasClinicas();
 
   // Recordatorios pendientes
   const recordatoriosPendientes = useMemo(() => {
@@ -69,7 +76,9 @@ export default function DashboardView() {
     isLoadingMascotas ||
     isLoadingRecordatorios ||
     isLoadingPagos ||
-    isLoadingTurnos;
+    isLoadingTurnos ||
+    isLoadingVentas ||
+    isLoadingHistorias;
 
   if (isLoading) {
     return (
@@ -209,6 +218,12 @@ export default function DashboardView() {
             )}
           </CardContent>
         </Card>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        <VentasPorMesChart ventas={ventas} />
+        <DeudaEvolucionChart itemsPago={itemsPago} />
+        <ConsultasPorEspecieChart historias={historias} mascotas={mascotas} />
       </div>
     </div>
   );
