@@ -263,15 +263,15 @@ const handleDeleteRecordatorio = () => {
   const deletingRecordatorio = recordatorios.find((r) => r.id === deletingRecordatorioId);
 
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Recordatorios</h1>
+    <div >
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Recordatorios</h1>
         <p className="text-muted-foreground">
           Gestión de recordatorios para seguimiento de pacientes
         </p>
       </div>
 
-      <Card>
+      <Card className="mt-6">
         <CardHeader>
           <CardTitle>Calendario de Recordatorios</CardTitle>
           <CardDescription>

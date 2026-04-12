@@ -19,8 +19,8 @@ export const useUpdateClinica = () => {
 
   return useMutation({
     mutationFn: (data: ClinicaFormData) => updateClinica(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: clinicaKeys.all });
+    onSuccess: (updatedClinica) => {
+      queryClient.setQueryData(clinicaKeys.all, updatedClinica);
       toast.success('Perfil de clínica actualizado');
     },
     onError: (error: Error) => {

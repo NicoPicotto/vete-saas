@@ -157,8 +157,10 @@ export default function PagosView() {
 
   if (isLoadingClientes || isLoadingPagos) {
     return (
-      <div className="p-6">
-        <h1 className="text-3xl font-bold mb-6">Pagos y Cuentas</h1>
+      <div>
+        
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Pagos y Cuentas</h1>
         <Card>
           <CardContent className="py-10">
             <div className="flex justify-center items-center gap-2">
@@ -168,11 +170,12 @@ export default function PagosView() {
           </CardContent>
         </Card>
       </div>
+      </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="mb-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold">Pagos y Cuentas</h1>
@@ -182,7 +185,7 @@ export default function PagosView() {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="saldos" className="w-full">
+      <Tabs defaultValue="saldos" className="w-full mt-6">
         <TabsList>
           <TabsTrigger value="saldos">
             <DollarSign className="mr-2 h-4 w-4" />

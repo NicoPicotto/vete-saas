@@ -347,10 +347,10 @@ export default function TurnosView() {
   const deletingTurno = turnos.find((t) => t.id === deletingTurnoId);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="mb-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Turnos</h1>
+          <h1 className="text-3xl font-bold">Turnos</h1>
           <p className="text-muted-foreground">Gestión de turnos y agenda de la clínica</p>
         </div>
         <Button onClick={() => setIsTurnoFormOpen(true)}>
@@ -359,7 +359,7 @@ export default function TurnosView() {
         </Button>
       </div>
 
-      <Card>
+      <Card className="mt-6">
         <CardHeader>
           <CardTitle>Agenda de Turnos</CardTitle>
           <CardDescription>Visualizá los turnos por período</CardDescription>
