@@ -1,10 +1,9 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { PawPrint } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 
 export function SubscriptionGuard() {
   const { hasAccess, isLoading } = useSubscription();
-  const location = useLocation();
 
   if (isLoading) {
     return (
@@ -15,8 +14,7 @@ export function SubscriptionGuard() {
     );
   }
 
-  // Permitir siempre el acceso a /billing para que puedan suscribirse
-  if (!hasAccess && location.pathname !== '/billing') {
+  if (!hasAccess) {
     return <Navigate to='/billing' replace />;
   }
 

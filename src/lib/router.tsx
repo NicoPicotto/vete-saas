@@ -32,16 +32,18 @@ export const router = createBrowserRouter([
   {
     element: <AuthGuard />,
     children: [
-      // Fuera del AppLayout (sin sidebar)
+      // Sin sidebar
       { path: '/onboarding', element: <OnboardingView /> },
-      { path: '/billing', element: <BillingView /> },
-      // App principal — requiere suscripción activa
+      // Con sidebar
       {
-        element: <SubscriptionGuard />,
+        path: '/',
+        element: <AppLayout />,
         children: [
+          // Siempre accesible (no requiere suscripción activa)
+          { path: 'billing', element: <BillingView /> },
+          // Requiere suscripción activa
           {
-            path: '/',
-            element: <AppLayout />,
+            element: <SubscriptionGuard />,
             children: [
               { index: true, element: <DashboardView /> },
               { path: 'clientes', element: <ClientesView /> },

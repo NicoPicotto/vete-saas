@@ -36,7 +36,7 @@ const PLANS = [
 
 export default function BillingView() {
    const [searchParams] = useSearchParams();
-   const { subscription, isTrialActive, trialDaysLeft, isLoading, refetch } =
+   const { subscription, isTrialActive, trialDaysLeft, isLoading } =
       useSubscription();
    const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
@@ -85,7 +85,7 @@ export default function BillingView() {
    }
 
    return (
-      <main className='flex items-center justify-center h-screen p-4'>
+     
          <div className='max-w-4xl space-y-6 w-full'>
             <div className='flex items-center gap-3'>
                <CreditCard className='h-6 w-6 text-muted-foreground' />
@@ -212,6 +212,6 @@ export default function BillingView() {
                </div>
             </div>
          </div>
-      </main>
+      
    );
 }
