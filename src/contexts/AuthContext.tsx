@@ -9,6 +9,7 @@ interface AuthContextValue {
   signIn: (email: string, password: string) => ReturnType<typeof supabase.auth.signInWithPassword>;
   signOut: () => ReturnType<typeof supabase.auth.signOut>;
   resetPassword: (email: string) => ReturnType<typeof supabase.auth.resetPasswordForEmail>;
+  updatePassword: (password: string) => ReturnType<typeof supabase.auth.updateUser>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -44,8 +45,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       redirectTo: `${window.location.origin}/nueva-password`,
     });
 
+  const updatePassword = (password: string) =>
+    supabase.auth.updateUser({ password });
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signIn, signOut, resetPassword }}>
+    <AuthContext.Provider value={{ user, session, loading, signIn, signOut, resetPassword, updatePassword }}>
       {children}
     </AuthContext.Provider>
   );

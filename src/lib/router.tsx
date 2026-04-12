@@ -3,6 +3,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import { AuthGuard } from '@/components/layout/AuthGuard';
 import LoginView from '@/views/AuthView/LoginView';
 import RecuperarPasswordView from '@/views/AuthView/RecuperarPasswordView';
+import NuevaPasswordView from '@/views/AuthView/NuevaPasswordView';
 import OnboardingView from '@/views/OnboardingView';
 import DashboardView from '@/views/DashboardView';
 import ClientesView from '@/views/ClientesView';
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
   // Rutas públicas
   { path: '/login', element: <LoginView /> },
   { path: '/recuperar-password', element: <RecuperarPasswordView /> },
+  { path: '/nueva-password', element: <NuevaPasswordView /> },
   // Rutas protegidas (requieren auth)
   {
     element: <AuthGuard />,
