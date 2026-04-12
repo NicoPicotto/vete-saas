@@ -55,7 +55,7 @@ export default function ConsultasPorEspecieChart({ historias, mascotas }: Props)
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value: number, name: string) => [value, name]}
+                formatter={(value, name) => [value, name]}
                 contentStyle={{ borderRadius: 8, fontSize: 13 }}
               />
               <Legend wrapperStyle={{ fontSize: 12 }} />
