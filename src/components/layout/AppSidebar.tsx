@@ -102,6 +102,16 @@ export function AppSidebar() {
                      <span>Configuración</span>
                   </Link>
                </SidebarMenuButton>
+               <SidebarMenuButton
+                  asChild
+                  isActive={location.pathname === '/billing'}
+                  className='text-muted-foreground'
+               >
+                  <Link to='/billing'>
+                     <CreditCard className='h-4 w-4' />
+                     <span>Suscripción</span>
+                  </Link>
+               </SidebarMenuButton>
                <p className='truncate px-2 text-xs text-muted-foreground'>{user?.email}</p>
                <SidebarMenuButton onClick={handleLogout} className='text-muted-foreground'>
                   <LogOut className='h-4 w-4' />

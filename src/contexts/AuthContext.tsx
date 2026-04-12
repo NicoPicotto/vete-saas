@@ -7,6 +7,7 @@ interface AuthContextValue {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => ReturnType<typeof supabase.auth.signInWithPassword>;
+  signUp: (email: string, password: string) => ReturnType<typeof supabase.auth.signUp>;
   signOut: () => ReturnType<typeof supabase.auth.signOut>;
   resetPassword: (email: string) => ReturnType<typeof supabase.auth.resetPasswordForEmail>;
   updatePassword: (password: string) => ReturnType<typeof supabase.auth.updateUser>;
@@ -38,6 +39,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = (email: string, password: string) =>
     supabase.auth.signInWithPassword({ email, password });
 
+  const signUp = (email: string, password: string) =>
+    supabase.auth.signUp({ email, password });
+
   const signOut = () => supabase.auth.signOut();
 
   const resetPassword = (email: string) =>
@@ -49,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.updateUser({ password });
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signIn, signOut, resetPassword, updatePassword }}>
+    <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut, resetPassword, updatePassword }}>
       {children}
     </AuthContext.Provider>
   );

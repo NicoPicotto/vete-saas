@@ -8,26 +8,37 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function LoginView() {
+export default function RegisterView() {
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { signUp } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
 
-    const { error } = await signIn(email, password);
+    if (password !== confirm) {
+      toast.error('Las contraseñas no coinciden.');
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
+    setLoading(true);
+    const { error } = await signUp(email, password);
 
     if (error) {
-      toast.error('Credenciales incorrectas. Verificá tu email y contraseña.');
+      toast.error(error.message);
       setLoading(false);
       return;
     }
 
-    navigate('/', { replace: true });
+    navigate('/onboarding', { replace: true });
   }
 
   return (
@@ -36,13 +47,13 @@ export default function LoginView() {
         <div className='flex flex-col items-center gap-2 text-center'>
           <PawPrint className='h-8 w-8 text-primary' />
           <h1 className='text-2xl font-bold'>VeteVite</h1>
-          <p className='text-sm text-muted-foreground'>Sistema de gestión veterinaria</p>
+          <p className='text-sm text-muted-foreground'>Empezá tu prueba gratuita de 14 días</p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Iniciar sesión</CardTitle>
-            <CardDescription>Ingresá con tu email y contraseña</CardDescription>
+            <CardTitle>Crear cuenta</CardTitle>
+            <CardDescription>Sin tarjeta de crédito requerida</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className='space-y-4'>
@@ -60,33 +71,37 @@ export default function LoginView() {
               </div>
 
               <div className='space-y-2'>
-                <div className='flex items-center justify-between'>
-                  <Label htmlFor='password'>Contraseña</Label>
-                  <Link
-                    to='/recuperar-password'
-                    className='text-xs text-muted-foreground underline-offset-4 hover:underline'
-                  >
-                    Olvidé mi contraseña
-                  </Link>
-                </div>
+                <Label htmlFor='password'>Contraseña</Label>
                 <Input
                   id='password'
                   type='password'
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  autoComplete='current-password'
+                  autoComplete='new-password'
+                />
+              </div>
+
+              <div className='space-y-2'>
+                <Label htmlFor='confirm'>Confirmar contraseña</Label>
+                <Input
+                  id='confirm'
+                  type='password'
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  required
+                  autoComplete='new-password'
                 />
               </div>
 
               <Button type='submit' className='w-full' disabled={loading}>
-                {loading ? 'Ingresando...' : 'Ingresar'}
+                {loading ? 'Creando cuenta...' : 'Empezar prueba gratuita'}
               </Button>
 
               <p className='text-center text-sm text-muted-foreground'>
-                ¿No tenés cuenta?{' '}
-                <Link to='/register' className='underline-offset-4 hover:underline'>
-                  Registrate gratis
+                ¿Ya tenés cuenta?{' '}
+                <Link to='/login' className='underline-offset-4 hover:underline'>
+                  Iniciá sesión
                 </Link>
               </p>
             </form>

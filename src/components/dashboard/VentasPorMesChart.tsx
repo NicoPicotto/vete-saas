@@ -54,7 +54,7 @@ export default function VentasPorMesChart({ ventas }: Props) {
               width={40}
             />
             <Tooltip
-              formatter={(value: number) => [`$${value.toLocaleString()}`, 'Total']}
+              formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Total']}
               labelStyle={{ fontWeight: 600 }}
               contentStyle={{ borderRadius: 8, fontSize: 13 }}
             />

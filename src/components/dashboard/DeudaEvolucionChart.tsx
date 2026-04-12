@@ -74,8 +74,8 @@ export default function DeudaEvolucionChart({ itemsPago }: Props) {
               width={40}
             />
             <Tooltip
-              formatter={(value: number, name: string) => [
-                `$${value.toLocaleString()}`,
+              formatter={(value, name) => [
+                `$${Number(value).toLocaleString()}`,
                 name === 'facturado' ? 'Facturado' : 'Cobrado',
               ]}
               labelStyle={{ fontWeight: 600 }}
